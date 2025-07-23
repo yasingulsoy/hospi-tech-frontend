@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HospiTech - Yapay Zekâ Destekli Veritabanı Raporlama Platformu
 
-## Getting Started
+## Kurulum ve Çalıştırma
 
-First, run the development server:
+1. **Gereksinimler:**
+   - Node.js 18+
+   - npm 9+
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. **Bağımlılıkları Kurun:**
+   ```bash
+   npm install
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. **Ortam Değişkenlerini Ayarlayın:**
+   Proje kök dizinine `.env` dosyası oluşturun ve aşağıdaki örneğe göre doldurun:
+   ```env
+   OPENAI_API_KEY=buraya_anahtarınızı_yazın
+   DB_TYPE=sqlite # veya postgresql, mysql, mssql
+   SQLITE_PATH=./veritabani.sqlite
+   POSTGRES_URL=postgres://kullanici:sifre@localhost:5432/veritabani
+   MYSQL_URL=mysql://kullanici:sifre@localhost:3306/veritabani
+   MSSQL_URL=mssql://kullanici:sifre@localhost:1433;database=veritabani
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. **Projeyi Başlatın:**
+   ```bash
+   npm run dev
+   ```
+   Ardından tarayıcıda [http://localhost:3000](http://localhost:3000) adresine gidin.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Özellikler
+- Herhangi bir SQLite, PostgreSQL, MySQL veya MSSQL veritabanına bağlanma
+- Tüm tablo ve sütunları otomatik listeleme
+- Sütunlara Türkçe açıklama ekleme
+- Doğal dilde (Türkçe) sorgu yazma ve GPT-4 ile güvenli SQL üretimi
+- Sadece SELECT sorguları desteklenir, DELETE/UPDATE/INSERT engellenir
+- Sonuçları tablo ve grafik olarak görme
+- Excel (.xlsx) ve PDF çıktısı alma (grafik dahil)
+- Geçmiş raporlar, favoriler, zamanlanmış raporlar
+- Kullanıcı seviyeleri (admin, izleyici)
+- Tüm arayüz ve hata/bilgi mesajları Türkçe
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notlar
+- OpenAI API anahtarınızı almak için: https://platform.openai.com/api-keys
+- Veritabanı bağlantı bilgilerinizi doğru girdiğinizden emin olun.
+- Herhangi bir hata veya öneriniz olursa lütfen iletin.
