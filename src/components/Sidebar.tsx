@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { HomeIcon, ServerIcon, TableCellsIcon, ChatBubbleLeftRightIcon, DocumentChartBarIcon, StarIcon, UserCircleIcon, Bars3Icon, ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import { HomeIcon, ServerIcon, TableCellsIcon, ChatBubbleLeftRightIcon, DocumentChartBarIcon, StarIcon, UserCircleIcon, Bars3Icon, ArrowRightOnRectangleIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 const menu = [
   { href: "/db-upload", label: "Veritabanı Yükle", icon: ServerIcon },
   { href: "/describe-columns", label: "Sütun Açıklama", icon: TableCellsIcon },
   { href: "/query", label: "Doğal Dil Sorgu", icon: ChatBubbleLeftRightIcon },
+  { href: "/create-report", label: "Rapor Oluştur", icon: PlusIcon },
   { href: "/reports", label: "Raporlar", icon: DocumentChartBarIcon },
   { href: "/favorites", label: "Favoriler", icon: StarIcon },
   { href: "/profile", label: "Profil", icon: UserCircleIcon },
@@ -39,40 +40,59 @@ const Sidebar = () => {
     <>
       {/* Mobilde hamburger menü */}
       <button
-        className="md:hidden fixed top-4 left-4 z-30 bg-blue-600 p-2 rounded-full text-white shadow-lg"
+        className="md:hidden fixed top-4 left-4 z-30 bg-gradient-to-br from-blue-500 to-purple-600 p-3 rounded-full text-white shadow-lg hover:shadow-xl transition-all duration-300"
         onClick={() => setSidebarOpen(!sidebarOpen)}
         aria-label="Menüyü Aç/Kapat"
       >
         <Bars3Icon className="w-6 h-6" />
       </button>
       
+      {/* Mobil overlay */}
+      {sidebarOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 z-10"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
       {/* Sidebar */}
-      <aside className={`w-64 h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col p-4 shadow-lg fixed md:static z-20 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
-        <h1 className="text-2xl font-extrabold mb-10 tracking-tight text-blue-400 flex items-center gap-2">
-          <HomeIcon className="w-8 h-8 text-blue-400" /> HospiTech
-        </h1>
-        <nav className="flex flex-col gap-2">
+      <aside className={`w-72 h-screen bg-white/90 backdrop-blur-xl border-r border-gray-200/50 flex flex-col p-6 shadow-2xl fixed md:static z-20 transition-all duration-500 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+        <div className="flex items-center gap-3 mb-12">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+            <HomeIcon className="w-6 h-6 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            HospiTech
+          </h1>
+        </div>
+        
+        <nav className="flex flex-col gap-2 md:gap-3 flex-1">
           {menu.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-600/80 transition-colors text-base font-medium group"
+              className="group flex items-center gap-3 md:gap-4 px-3 md:px-4 py-2 md:py-3 rounded-xl transition-all duration-300 hover:bg-white/20 hover:shadow-lg hover:scale-105 text-gray-700 hover:text-gray-900 font-medium"
               onClick={() => setSidebarOpen(false)}
             >
-              <Icon className="w-6 h-6 text-blue-300 group-hover:text-white transition-colors" />
-              <span>{label}</span>
+              <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center group-hover:from-blue-200 group-hover:to-purple-200 transition-all duration-300">
+                <Icon className="w-4 h-4 md:w-5 md:h-5 text-blue-600 group-hover:text-blue-700 transition-colors" />
+              </div>
+              <span className="text-xs md:text-sm font-semibold">{label}</span>
             </Link>
           ))}
         </nav>
-        <div className="mt-auto pt-8">
+        
+        <div className="pt-6 border-t border-gray-200/50">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-600/80 transition-colors text-base font-medium group w-full"
+            className="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-red-50 transition-all duration-300 w-full text-red-600 hover:text-red-700 font-medium"
           >
-            <ArrowRightOnRectangleIcon className="w-6 h-6 text-red-300 group-hover:text-white transition-colors" />
-            <span>Çıkış Yap</span>
+            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-all duration-300">
+              <ArrowRightOnRectangleIcon className="w-5 h-5" />
+            </div>
+            <span className="text-sm font-semibold">Çıkış Yap</span>
           </button>
-          <div className="text-xs text-gray-400 mt-4">© 2024 HospiTech</div>
+          <div className="text-xs text-gray-500 mt-4 text-center">© 2024 HospiTech</div>
         </div>
       </aside>
     </>

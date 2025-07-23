@@ -29,9 +29,12 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   // Yükleniyor durumu
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen text-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+        <div className="text-center animate-fade-in">
+          <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
+            <div className="animate-spin rounded-full h-10 w-10 border-4 border-white border-t-transparent"></div>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">HospiTech</h3>
           <p className="text-gray-600">Yükleniyor...</p>
         </div>
       </div>
@@ -41,12 +44,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   // Giriş yapmamışsa loading göster
   if (!isLoggedIn) {
     return (
-      <div className="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen text-gray-900">
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Yönlendiriliyor...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+        <div className="text-center animate-fade-in">
+          <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
+            <div className="animate-spin rounded-full h-10 w-10 border-4 border-white border-t-transparent"></div>
           </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Yönlendiriliyor</h3>
+          <p className="text-gray-600">Giriş sayfasına yönlendiriliyorsunuz...</p>
         </div>
       </div>
     );
@@ -55,7 +59,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   return (
     <div className="flex">
       <Sidebar />
-      <main className="flex-1 p-4 md:p-8 bg-transparent min-h-screen ml-0 md:ml-64">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 bg-transparent min-h-screen ml-0 md:ml-72">
         {children}
       </main>
     </div>
