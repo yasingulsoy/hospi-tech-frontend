@@ -25,7 +25,7 @@ export default function ReportCard({
           <StarIcon className={`w-6 h-6 ${favorite ? 'text-yellow-400' : 'text-gray-300'}`} />
         </button>
       </div>
-      <div className="text-gray-600 text-sm line-clamp-2">{description}</div>
+      <div className="text-gray-900 text-sm line-clamp-2">{description}</div>
       <div className="text-xs text-gray-400 mt-2">{date}</div>
     </div>
   );

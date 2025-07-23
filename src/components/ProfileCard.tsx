@@ -27,7 +27,7 @@ export default function ProfileCard({
         </span>
       </div>
       <div className="text-xl font-bold text-blue-700">{name}</div>
-      <div className="text-gray-500">{email}</div>
+      <div className="text-gray-700">{email}</div>
       <button className="mt-4 w-full bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-semibold shadow-sm transition-colors">Şifre Değiştir</button>
       <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold shadow-sm transition-colors">Çıkış Yap</button>
     </div>

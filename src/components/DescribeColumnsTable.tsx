@@ -54,11 +54,11 @@ export default function DescribeColumnsTable() {
               <tr key={col.table + col.column} className="bg-gray-50 hover:bg-blue-50 transition-colors">
                 <td className="px-4 py-2 font-mono text-sm text-gray-700">{col.table}</td>
                 <td className="px-4 py-2 font-mono text-sm text-gray-700">{col.column}</td>
-                <td className="px-4 py-2 text-gray-500">{col.type}</td>
+                <td className="px-4 py-2 text-gray-700">{col.type}</td>
                 <td className="px-4 py-2">
                   <input
                     type="text"
-                    className="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 px-3 py-1 text-sm"
+                    className="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 px-3 py-1 text-sm text-gray-900 placeholder-gray-500"
                     placeholder="Örn: Tedavi tarihi, Toplam ücret..."
                     value={col.description}
                     onChange={e => handleDescChange(idx, e.target.value)}

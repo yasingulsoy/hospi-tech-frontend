@@ -12,9 +12,9 @@ export default function DbUploadForm() {
     <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 animate-fade-in border border-blue-100">
       <form className="space-y-6">
         <label className="block">
-          <span className="font-semibold text-gray-700">Veritabanı Türü</span>
+          <span className="font-semibold text-gray-900">Veritabanı Türü</span>
           <select
-            className="block w-full mt-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            className="block w-full mt-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
             value={dbType}
             onChange={e => setDbType(e.target.value)}
           >
@@ -27,7 +27,7 @@ export default function DbUploadForm() {
 
         {dbType === "sqlite" ? (
           <label className="block">
-            <span className="font-semibold text-gray-700 flex items-center gap-2"><CloudArrowUpIcon className="w-5 h-5 text-blue-500" /> SQLite Dosyası</span>
+            <span className="font-semibold text-gray-900 flex items-center gap-2"><CloudArrowUpIcon className="w-5 h-5 text-blue-500" /> SQLite Dosyası</span>
             <input
               type="file"
               accept=".sqlite,.db"
@@ -37,20 +37,20 @@ export default function DbUploadForm() {
         ) : (
           <>
             <label className="block">
-              <span className="font-semibold text-gray-700 flex items-center gap-2"><LinkIcon className="w-5 h-5 text-blue-500" /> Bağlantı Dizesi</span>
+              <span className="font-semibold text-gray-900 flex items-center gap-2"><LinkIcon className="w-5 h-5 text-blue-500" /> Bağlantı Dizesi</span>
               <input
                 type="text"
-                className="block w-full mt-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full mt-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
                 placeholder="postgres://user:pass@host:port/db"
                 value={connectionString}
                 onChange={e => setConnectionString(e.target.value)}
               />
             </label>
             <label className="block">
-              <span className="font-semibold text-gray-700 flex items-center gap-2"><GlobeAltIcon className="w-5 h-5 text-blue-500" /> URL ile Bağlan</span>
+              <span className="font-semibold text-gray-900 flex items-center gap-2"><GlobeAltIcon className="w-5 h-5 text-blue-500" /> URL ile Bağlan</span>
               <input
                 type="url"
-                className="block w-full mt-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full mt-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
                 placeholder="https://api.example.com/database"
                 value={connectionUrl}
                 onChange={e => setConnectionUrl(e.target.value)}
