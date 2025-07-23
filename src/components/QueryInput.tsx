@@ -50,13 +50,13 @@ export default function QueryInput({ onSubmit }: { onSubmit: (query: string) => 
   return (
     <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-10 border border-blue-100 animate-fade-in">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <label className="font-semibold text-gray-700 text-lg flex items-center gap-2">
+        <label className="font-semibold text-gray-900 text-lg flex items-center gap-2">
           <SparklesIcon className="w-6 h-6 text-blue-400" /> Doğal Dil Sorgu
         </label>
         <div className="flex gap-2 items-center">
           <input
             type="text"
-            className="flex-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 px-4 py-3 text-base shadow-sm"
+            className="flex-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 px-4 py-3 text-base shadow-sm text-gray-900 placeholder-gray-500"
             placeholder="Örn: Son 6 ayda en çok kazandıran tedavi nedir?"
             value={query}
             onChange={e => setQuery(e.target.value)}
