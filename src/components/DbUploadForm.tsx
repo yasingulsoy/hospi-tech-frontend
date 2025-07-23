@@ -112,7 +112,7 @@ export default function DbUploadForm() {
 
             {dbType === "sqlite" ? (
               <div>
-                <label className="block text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <label className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
                   <CloudArrowUpIcon className="w-5 h-5 text-blue-500" /> 
                   SQLite Dosyası
                 </label>
@@ -125,7 +125,7 @@ export default function DbUploadForm() {
               </div>
             ) : (
               <div>
-                <label className="block text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <label className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
                   <LinkIcon className="w-5 h-5 text-blue-500" /> 
                   Bağlantı Dizesi
                 </label>
