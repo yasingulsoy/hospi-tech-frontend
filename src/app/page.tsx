@@ -12,8 +12,11 @@ import {
   SparklesIcon,
   ShieldCheckIcon,
   BoltIcon,
-  UsersIcon
+  UsersIcon,
+  LinkIcon,
+  TableCellsIcon
 } from "@heroicons/react/24/outline";
+import ConnectionStatus from "../components/ConnectionStatus";
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -78,6 +81,11 @@ export default function Home() {
               Hoş geldiniz! Veritabanınızı bağlayın ve AI destekli raporlar oluşturmaya başlayın.
             </p>
             
+            {/* Bağlantı Durumu */}
+            <div className="flex justify-center mb-6">
+              <ConnectionStatus />
+            </div>
+            
             {/* Hızlı İstatistikler */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8 md:mb-12 px-4">
               {stats.map((stat, index) => {
@@ -100,55 +108,94 @@ export default function Home() {
           </div>
 
           {/* Hızlı Erişim Kartları */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12 px-4">
-                          <Link href="/db-upload" className="group">
-                <div className="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105">
-                  <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <ServerIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3">Veritabanı Bağla</h3>
-                  <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Veritabanınızı yükleyin ve tabloları görüntüleyin</p>
-                  <div className="flex items-center text-blue-600 font-semibold text-sm md:text-base">
-                    Başla <ArrowRightIcon className="w-3 h-3 md:w-4 md:h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 md:gap-6 mb-8 md:mb-12 px-4">
+            <Link href="/db-upload" className="group">
+              <div className="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 h-full">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <ServerIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
                 </div>
-              </Link>
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3">Veritabanı Bağla</h3>
+                <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Veritabanınızı yükleyin ve tabloları görüntüleyin</p>
+                <div className="flex items-center text-blue-600 font-semibold text-sm md:text-base">
+                  Başla <ArrowRightIcon className="w-3 h-3 md:w-4 md:h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/connections" className="group">
+              <div className="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 h-full">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <LinkIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                </div>
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3">Bağlantı Yöneticisi</h3>
+                <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Canlı veritabanı bağlantılarını yönetin</p>
+                <div className="flex items-center text-indigo-600 font-semibold text-sm md:text-base">
+                  Yönet <ArrowRightIcon className="w-3 h-3 md:w-4 md:h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
 
             <Link href="/query" className="group">
-              <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <ChatBubbleLeftRightIcon className="w-8 h-8 text-white" />
+              <div className="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 h-full">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <ChatBubbleLeftRightIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">AI Sorgu</h3>
-                <p className="text-gray-600 mb-4">Doğal dil ile veritabanınızı sorgulayın</p>
-                <div className="flex items-center text-purple-600 font-semibold">
-                  Sorgula <ArrowRightIcon className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3">AI Sorgu</h3>
+                <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Doğal dil ile veritabanınızı sorgulayın</p>
+                <div className="flex items-center text-purple-600 font-semibold text-sm md:text-base">
+                  Sorgula <ArrowRightIcon className="w-3 h-3 md:w-4 md:h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </Link>
 
             <Link href="/create-report" className="group">
-              <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <ChartBarIcon className="w-8 h-8 text-white" />
+              <div className="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 h-full">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <ChartBarIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Rapor Oluştur</h3>
-                <p className="text-gray-600 mb-4">AI destekli akıllı raporlar oluşturun</p>
-                <div className="flex items-center text-green-600 font-semibold">
-                  Oluştur <ArrowRightIcon className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3">Rapor Oluştur</h3>
+                <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">AI destekli akıllı raporlar oluşturun</p>
+                <div className="flex items-center text-green-600 font-semibold text-sm md:text-base">
+                  Oluştur <ArrowRightIcon className="w-3 h-3 md:w-4 md:h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </Link>
 
             <Link href="/reports" className="group">
-              <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105">
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <DocumentTextIcon className="w-8 h-8 text-white" />
+              <div className="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 h-full">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <DocumentTextIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Raporlarım</h3>
-                <p className="text-gray-600 mb-4">Kaydedilen raporları görüntüleyin</p>
-                <div className="flex items-center text-orange-600 font-semibold">
-                  Görüntüle <ArrowRightIcon className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3">Raporlarım</h3>
+                <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Kaydedilen raporları görüntüleyin</p>
+                <div className="flex items-center text-orange-600 font-semibold text-sm md:text-base">
+                  Görüntüle <ArrowRightIcon className="w-3 h-3 md:w-4 md:h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/describe-columns" className="group">
+              <div className="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 h-full">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <TableCellsIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                </div>
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3">Sütun Açıklama</h3>
+                <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Veritabanı sütunlarını analiz edin</p>
+                <div className="flex items-center text-teal-600 font-semibold text-sm md:text-base">
+                  Analiz Et <ArrowRightIcon className="w-3 h-3 md:w-4 md:h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/favorites" className="group">
+              <div className="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 h-full">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <StarIcon className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                </div>
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-3">Favoriler</h3>
+                <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Favori raporlarınızı görüntüleyin</p>
+                <div className="flex items-center text-yellow-600 font-semibold text-sm md:text-base">
+                  Görüntüle <ArrowRightIcon className="w-3 h-3 md:w-4 md:h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </Link>

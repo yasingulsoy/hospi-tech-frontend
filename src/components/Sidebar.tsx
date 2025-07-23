@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { HomeIcon, ServerIcon, TableCellsIcon, ChatBubbleLeftRightIcon, DocumentChartBarIcon, StarIcon, UserCircleIcon, Bars3Icon, ArrowRightOnRectangleIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { HomeIcon, ServerIcon, TableCellsIcon, ChatBubbleLeftRightIcon, DocumentChartBarIcon, StarIcon, UserCircleIcon, Bars3Icon, ArrowRightOnRectangleIcon, PlusIcon, LinkIcon } from "@heroicons/react/24/outline";
 
 const menu = [
   { href: "/db-upload", label: "Veritabanı Yükle", icon: ServerIcon },
+  { href: "/connections", label: "Bağlantı Yöneticisi", icon: LinkIcon },
   { href: "/describe-columns", label: "Sütun Açıklama", icon: TableCellsIcon },
   { href: "/query", label: "Doğal Dil Sorgu", icon: ChatBubbleLeftRightIcon },
   { href: "/create-report", label: "Rapor Oluştur", icon: PlusIcon },

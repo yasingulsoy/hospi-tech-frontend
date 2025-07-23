@@ -9,14 +9,30 @@ import { Client } from 'pg';
 // Veritabanı bağlantıları için gerçek implementasyon
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
-    const dbType = formData.get('dbType') as string;
+    let dbType: string;
+    let connectionString: string | undefined;
+    let sqliteFile: File | undefined;
+    
+    // Content-Type'a göre request'i parse et
+    const contentType = request.headers.get('content-type');
+    
+    if (contentType?.includes('application/json')) {
+      // JSON request
+      const body = await request.json();
+      dbType = body.dbType;
+      connectionString = body.connectionString;
+    } else {
+      // FormData request (SQLite için)
+      const formData = await request.formData();
+      dbType = formData.get('dbType') as string;
+      connectionString = formData.get('connectionString') as string;
+      sqliteFile = formData.get('sqliteFile') as File;
+    }
     
     let tables: any[] = [];
 
     switch (dbType) {
       case 'sqlite':
-        const sqliteFile = formData.get('sqliteFile') as File;
         if (!sqliteFile) {
           return NextResponse.json({ error: 'SQLite dosyası seçilmedi' }, { status: 400 });
         }
@@ -26,7 +42,6 @@ export async function POST(request: NextRequest) {
       case 'postgresql':
       case 'mysql':
       case 'mssql':
-        const connectionString = formData.get('connectionString') as string;
         if (!connectionString) {
           return NextResponse.json({ error: 'Bağlantı dizesi girilmedi' }, { status: 400 });
         }
