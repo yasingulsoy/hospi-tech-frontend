@@ -1,10 +1,42 @@
-import { ChartBarIcon, TableCellsIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { ChartBarIcon, TableCellsIcon, ExclamationCircleIcon, ArrowDownTrayIcon, StarIcon } from "@heroicons/react/24/outline";
 import ResultChart from "./ResultChart";
-import DownloadButtons from "./DownloadButtons";
 import { useState } from "react";
 
 export default function QueryResult({ loading, error, data }: { loading: boolean, error?: string, data?: any }) {
-  const [chartType, setChartType] = useState<"pie" | "bar">("pie");
+  const [chartType, setChartType] = useState<"line" | "bar" | "pie" | "doughnut">("bar");
+  const [showChart, setShowChart] = useState(false);
+
+  const saveReport = () => {
+    if (!data || data.length === 0) return;
+    
+    const report = {
+      title: "Sorgu Sonucu",
+      description: "Doğal dil sorgusu sonucu",
+      chartType: chartType,
+      data: data,
+      createdAt: new Date().toISOString(),
+      isFavorite: false,
+    };
+
+    const savedReports = JSON.parse(localStorage.getItem('savedReports') || '[]');
+    savedReports.push({ ...report, id: Date.now().toString() });
+    localStorage.setItem('savedReports', JSON.stringify(savedReports));
+    
+    alert("Rapor başarıyla kaydedildi!");
+  };
+
+  const exportData = () => {
+    if (!data || data.length === 0) return;
+    
+    const dataStr = JSON.stringify(data, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'sorgu-sonucu.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   if (loading) {
     return (
@@ -17,6 +49,7 @@ export default function QueryResult({ loading, error, data }: { loading: boolean
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-16 animate-fade-in">
@@ -25,62 +58,88 @@ export default function QueryResult({ loading, error, data }: { loading: boolean
       </div>
     );
   }
+
   if (!data) {
     return null;
   }
-  // Örnek/mock veri
-  const columns = ["Tedavi", "Toplam Gelir"];
-  const rows = [
-    ["Diş Beyazlatma", "12.000 TL"],
-    ["Dolgu", "8.500 TL"],
-    ["Kanal Tedavisi", "7.200 TL"],
-  ];
+
+  const columns = Object.keys(data[0] || {});
+
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-10 border border-blue-100 mt-8 animate-fade-in">
-      <div className="flex items-center gap-2 mb-4">
-        <TableCellsIcon className="w-6 h-6 text-blue-400" />
-        <span className="font-bold text-blue-700">Sorgu Sonucu</span>
+    <div className="max-w-4xl mx-auto bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6 lg:p-10 border border-blue-100 mt-8 animate-fade-in mx-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+        <div className="flex items-center gap-2">
+          <TableCellsIcon className="w-5 h-5 md:w-6 md:h-6 text-blue-400" />
+          <span className="font-bold text-blue-700 text-base md:text-lg">Sorgu Sonucu</span>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setShowChart(!showChart)}
+            className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm"
+          >
+            <ChartBarIcon className="w-4 h-4 md:w-5 md:h-5" />
+            {showChart ? "Tablo" : "Grafik"}
+          </button>
+          <button 
+            onClick={exportData}
+            className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm"
+          >
+            <ArrowDownTrayIcon className="w-4 h-4 md:w-5 md:h-5" />
+            İndir
+          </button>
+          <button 
+            onClick={saveReport}
+            className="flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors text-sm"
+          >
+            <StarIcon className="w-4 h-4 md:w-5 md:h-5" />
+            Kaydet
+          </button>
+        </div>
       </div>
+
+      {showChart && (
+        <div className="mb-6">
+          <div className="flex items-center gap-4 mb-4">
+            <label className="text-sm font-medium text-gray-700">Grafik Türü:</label>
+            <select
+              value={chartType}
+              onChange={(e) => setChartType(e.target.value as "line" | "bar" | "pie" | "doughnut")}
+              className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="line">Çizgi Grafik</option>
+              <option value="bar">Sütun Grafik</option>
+              <option value="pie">Pasta Grafik</option>
+              <option value="doughnut">Halka Grafik</option>
+            </select>
+          </div>
+          <ResultChart data={data} chartType={chartType} title="Sorgu Sonucu" />
+        </div>
+      )}
+
       <div className="overflow-x-auto">
-        <table id="result-table" className="min-w-full border-separate border-spacing-y-2">
+        <table className="min-w-full border-separate border-spacing-y-2">
           <thead>
             <tr className="bg-blue-50 text-blue-900">
               {columns.map(col => (
-                <th key={col} className="px-4 py-2 text-left">{col}</th>
+                <th key={col} className="px-3 md:px-4 py-2 text-left text-sm">{col}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, i) => (
+            {data.map((row: any, i: number) => (
               <tr key={i} className="bg-gray-50 hover:bg-blue-50 transition-colors">
-                {row.map((cell, j) => (
-                  <td key={j} className="px-4 py-2 text-gray-700">{cell}</td>
+                {Object.values(row).map((cell: any, j: number) => (
+                  <td key={j} className="px-3 md:px-4 py-2 text-gray-700 text-sm">{String(cell)}</td>
                 ))}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <div className="mt-8 flex flex-col items-center">
-        <div className="flex items-center gap-2 mb-2">
-          <ChartBarIcon className="w-6 h-6 text-blue-400" />
-          <span className="font-bold text-blue-700">Grafik</span>
-          <div className="ml-4 flex gap-2">
-            <button
-              className={`px-3 py-1 rounded-full text-sm font-semibold border transition-colors ${chartType === 'pie' ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-50 text-blue-700 border-blue-200'}`}
-              onClick={() => setChartType('pie')}
-            >Pasta</button>
-            <button
-              className={`px-3 py-1 rounded-full text-sm font-semibold border transition-colors ${chartType === 'bar' ? 'bg-blue-600 text-white border-blue-600' : 'bg-blue-50 text-blue-700 border-blue-200'}`}
-              onClick={() => setChartType('bar')}
-            >Çubuk</button>
-          </div>
-        </div>
-        <div id="result-chart" className="w-full">
-          <ResultChart type={chartType} />
-        </div>
+
+      <div className="mt-4 text-xs md:text-sm text-gray-500">
+        Toplam {data.length} sonuç bulundu.
       </div>
-      <DownloadButtons tableId="result-table" chartId="result-chart" fileName="rapor" />
     </div>
   );
 } 

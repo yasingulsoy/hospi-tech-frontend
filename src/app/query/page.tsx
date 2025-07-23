@@ -9,19 +9,42 @@ export default function QueryPage() {
   const [error, setError] = useState<string | undefined>(undefined);
   const [data, setData] = useState<any>(null);
 
-  // Tablo ve sütun açıklamaları örnek (gerçek uygulamada backend'den alınacak)
-  const tabloYapisi = `patients (id: hasta numarası, name: hasta adı, birth_date: doğum tarihi)\ntreatments (treatment_date: tedavi tarihi, total_fee: toplam ücret)`;
+  // Tablo ve sütun açıklamalarını veritabanından al
+  const getTabloYapisi = () => {
+    const databaseInfo = localStorage.getItem('databaseInfo');
+    if (!databaseInfo) return "";
+    
+    const dbInfo = JSON.parse(databaseInfo);
+    if (!dbInfo.tables) return "";
+    
+    return dbInfo.tables.map((table: any) => {
+      const columns = table.columns.map((col: any) => 
+        `${col.column_name}: ${col.column_comment || col.data_type}`
+      ).join(', ');
+      return `${table.table} (${columns})`;
+    }).join('\n');
+  };
 
   const handleQuery = async (query: string) => {
     setLoading(true);
     setError(undefined);
     setData(null);
     try {
+      // Veritabanı bilgilerini al
+      const databaseInfo = localStorage.getItem('databaseInfo');
+      if (!databaseInfo) {
+        setError("Veritabanı bağlantısı bulunamadı. Lütfen önce veritabanını bağlayın.");
+        setLoading(false);
+        return;
+      }
+
+      const dbInfo = JSON.parse(databaseInfo);
+      
       // 1. GPT-4 ile SQL üret
       const sqlRes = await fetch("/api/generate-sql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ aciklama: query, tabloYapisi })
+        body: JSON.stringify({ aciklama: query, tabloYapisi: getTabloYapisi() })
       });
       const sqlData = await sqlRes.json();
       if (!sqlRes.ok) {
@@ -29,10 +52,14 @@ export default function QueryPage() {
         setLoading(false);
         return;
       }
+      
       // 2. SQL'i çalıştır
       const runRes = await fetch("/api/run-query", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "x-database-info": databaseInfo
+        },
         body: JSON.stringify({ sql: sqlData.sql })
       });
       const runData = await runRes.json();

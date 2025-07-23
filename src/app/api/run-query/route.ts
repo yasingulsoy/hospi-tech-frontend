@@ -15,39 +15,59 @@ export async function POST(req: NextRequest) {
     if (!sql.trim().toLowerCase().startsWith("select")) {
       return NextResponse.json({ error: "Sadece SELECT sorguları çalıştırılabilir." }, { status: 400 });
     }
-    let rows: any[] = [];
-    if (dbType === "sqlite") {
-      const sqlite3 = require("sqlite3").verbose();
-      const db = new sqlite3.Database(sqlitePath, sqlite3.OPEN_READONLY);
-      rows = await new Promise((resolve, reject) => {
-        db.all(sql, [], (err: any, rows: any[]) => {
-          if (err) reject(err);
-          else resolve(rows);
-        });
-        db.close();
-      });
-    } else if (dbType === "postgresql") {
-      const { Client } = require("pg");
-      const client = new Client({ connectionString: pgUrl, ssl: false });
-      await client.connect();
-      const result = await client.query(sql);
-      rows = result.rows;
-      await client.end();
-    } else if (dbType === "mysql") {
-      const mysql = require("mysql2/promise");
-      const conn = await mysql.createConnection(mysqlUrl);
-      const [results] = await conn.execute(sql);
-      rows = results;
-      await conn.end();
-    } else if (dbType === "mssql") {
-      const sqlMSSQL = require("mssql");
-      const pool = await sqlMSSQL.connect(mssqlUrl);
-      const result = await pool.request().query(sql);
-      rows = result.recordset;
-      await pool.close();
-    } else {
-      return NextResponse.json({ error: "Desteklenmeyen veritabanı türü." }, { status: 400 });
+
+    // localStorage'dan veritabanı bilgilerini al
+    const databaseInfo = req.headers.get('x-database-info');
+    if (!databaseInfo) {
+      return NextResponse.json({ error: "Veritabanı bağlantısı bulunamadı. Lütfen önce veritabanını bağlayın." }, { status: 400 });
     }
+
+    const dbInfo = JSON.parse(databaseInfo);
+    let rows: any[] = [];
+
+    // Veritabanı türüne göre sorgu çalıştır
+    switch (dbInfo.type) {
+      case "sqlite":
+        const sqlite3 = require("sqlite3").verbose();
+        const db = new sqlite3.Database(dbInfo.filePath || "./uploads/database.sqlite", sqlite3.OPEN_READONLY);
+        rows = await new Promise((resolve, reject) => {
+          db.all(sql, [], (err: any, rows: any[]) => {
+            if (err) reject(err);
+            else resolve(rows);
+          });
+          db.close();
+        });
+        break;
+
+      case "postgresql":
+        const { Client } = require("pg");
+        const client = new Client({ connectionString: dbInfo.connectionString, ssl: false });
+        await client.connect();
+        const result = await client.query(sql);
+        rows = result.rows;
+        await client.end();
+        break;
+
+      case "mysql":
+        const mysql = require("mysql2/promise");
+        const conn = await mysql.createConnection(dbInfo.connectionString);
+        const [results] = await conn.execute(sql);
+        rows = results;
+        await conn.end();
+        break;
+
+      case "mssql":
+        const sqlMSSQL = require("mssql");
+        const pool = await sqlMSSQL.connect(dbInfo.connectionString);
+        const mssqlResult = await pool.request().query(sql);
+        rows = mssqlResult.recordset;
+        await pool.close();
+        break;
+
+      default:
+        return NextResponse.json({ error: "Desteklenmeyen veritabanı türü." }, { status: 400 });
+    }
+
     return NextResponse.json({ rows });
   } catch (e: any) {
     return NextResponse.json({ error: "Sorgu çalıştırılırken bir hata oluştu: " + (e.message || e.toString()) }, { status: 500 });

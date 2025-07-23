@@ -75,24 +75,63 @@ export default function SmartReportBuilder() {
   const handleGenerateReport = async () => {
     setLoading(true);
     try {
-      // Burada AI ile rapor oluşturma API'si çağrılacak
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simülasyon
+      // Veritabanı bilgilerini al
+      const databaseInfo = localStorage.getItem('databaseInfo');
+      if (!databaseInfo) {
+        alert("Veritabanı bağlantısı bulunamadı. Lütfen önce veritabanını bağlayın.");
+        setLoading(false);
+        return;
+      }
+
+      const dbInfo = JSON.parse(databaseInfo);
       
-      // Mock veri
+      // AI ile SQL oluştur
+      const sqlRes = await fetch("/api/generate-sql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          aciklama: customPrompt,
+          tabloYapisi: dbInfo.tables.map((table: any) => {
+            const columns = table.columns.map((col: any) => 
+              `${col.column_name}: ${col.column_comment || col.data_type}`
+            ).join(', ');
+            return `${table.table} (${columns})`;
+          }).join('\n')
+        })
+      });
+
+      const sqlData = await sqlRes.json();
+      if (!sqlRes.ok) {
+        alert(sqlData.error || "SQL üretimi sırasında bir hata oluştu.");
+        setLoading(false);
+        return;
+      }
+
+      // SQL'i çalıştır
+      const runRes = await fetch("/api/run-query", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "x-database-info": databaseInfo
+        },
+        body: JSON.stringify({ sql: sqlData.sql })
+      });
+
+      const runData = await runRes.json();
+      if (!runRes.ok) {
+        alert(runData.error || "Sorgu çalıştırılırken bir hata oluştu.");
+        setLoading(false);
+        return;
+      }
+
       setReportData({
         title: selectedTemplate?.name || "Özel Rapor",
-        data: [
-          { month: "Ocak", revenue: 45000 },
-          { month: "Şubat", revenue: 52000 },
-          { month: "Mart", revenue: 48000 },
-          { month: "Nisan", revenue: 61000 },
-          { month: "Mayıs", revenue: 55000 },
-          { month: "Haziran", revenue: 67000 }
-        ],
+        data: runData.rows,
         chartType: chartType
       });
     } catch (error) {
       console.error("Rapor oluşturma hatası:", error);
+      alert("Rapor oluşturulurken bir hata oluştu.");
     } finally {
       setLoading(false);
     }
