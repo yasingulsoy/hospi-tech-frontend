@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { CloudArrowUpIcon, LinkIcon } from "@heroicons/react/24/outline";
+import { CloudArrowUpIcon, LinkIcon, GlobeAltIcon } from "@heroicons/react/24/outline";
 
 export default function DbUploadForm() {
   const [dbType, setDbType] = useState("sqlite");
-  const [file, setFile] = useState<File | null>(null);
   const [connectionString, setConnectionString] = useState("");
+  const [connectionUrl, setConnectionUrl] = useState("");
 
   return (
     <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 animate-fade-in border border-blue-100">
@@ -32,20 +32,31 @@ export default function DbUploadForm() {
               type="file"
               accept=".sqlite,.db"
               className="block w-full mt-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 file:bg-blue-50 file:text-blue-700 file:rounded-lg file:border-0 file:mr-2"
-              onChange={e => setFile(e.target.files?.[0] || null)}
             />
           </label>
         ) : (
-          <label className="block">
-            <span className="font-semibold text-gray-700 flex items-center gap-2"><LinkIcon className="w-5 h-5 text-blue-500" /> Bağlantı Dizesi</span>
-            <input
-              type="text"
-              className="block w-full mt-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="postgres://user:pass@host:port/db"
-              value={connectionString}
-              onChange={e => setConnectionString(e.target.value)}
-            />
-          </label>
+          <>
+            <label className="block">
+              <span className="font-semibold text-gray-700 flex items-center gap-2"><LinkIcon className="w-5 h-5 text-blue-500" /> Bağlantı Dizesi</span>
+              <input
+                type="text"
+                className="block w-full mt-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="postgres://user:pass@host:port/db"
+                value={connectionString}
+                onChange={e => setConnectionString(e.target.value)}
+              />
+            </label>
+            <label className="block">
+              <span className="font-semibold text-gray-700 flex items-center gap-2"><GlobeAltIcon className="w-5 h-5 text-blue-500" /> URL ile Bağlan</span>
+              <input
+                type="url"
+                className="block w-full mt-1 rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="https://api.example.com/database"
+                value={connectionUrl}
+                onChange={e => setConnectionUrl(e.target.value)}
+              />
+            </label>
+          </>
         )}
 
         <button

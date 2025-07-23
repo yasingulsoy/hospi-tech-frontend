@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { HomeIcon, ServerIcon, TableCellsIcon, ChatBubbleLeftRightIcon, DocumentChartBarIcon, StarIcon, UserCircleIcon, Bars3Icon } from "@heroicons/react/24/outline";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { HomeIcon, ServerIcon, TableCellsIcon, ChatBubbleLeftRightIcon, DocumentChartBarIcon, StarIcon, UserCircleIcon, Bars3Icon, ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 
 const menu = [
   { href: "/db-upload", label: "Veritabanı Yükle", icon: ServerIcon },
@@ -15,6 +16,24 @@ const menu = [
 
 const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const loginStatus = localStorage.getItem("isLoggedIn");
+    setIsLoggedIn(loginStatus === "true");
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userRole");
+    setIsLoggedIn(false);
+    router.push("/login");
+  };
+
+  if (!isLoggedIn) {
+    return null; // Sidebar'ı gösterme
+  }
 
   return (
     <>
@@ -45,7 +64,16 @@ const Sidebar = () => {
             </Link>
           ))}
         </nav>
-        <div className="mt-auto pt-8 text-xs text-gray-400">© 2024 HospiTech</div>
+        <div className="mt-auto pt-8">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-600/80 transition-colors text-base font-medium group w-full"
+          >
+            <ArrowRightOnRectangleIcon className="w-6 h-6 text-red-300 group-hover:text-white transition-colors" />
+            <span>Çıkış Yap</span>
+          </button>
+          <div className="text-xs text-gray-400 mt-4">© 2024 HospiTech</div>
+        </div>
       </aside>
     </>
   );
