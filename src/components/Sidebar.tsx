@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { HomeIcon, ServerIcon, TableCellsIcon, ChatBubbleLeftRightIcon, DocumentChartBarIcon, StarIcon, UserCircleIcon, Bars3Icon, ArrowRightOnRectangleIcon, PlusIcon, LinkIcon } from "@heroicons/react/24/outline";
 
 const menu = [
+  { href: "/", label: "Ana Sayfa", icon: HomeIcon },
   { href: "/db-upload", label: "Veritabanı Yükle", icon: ServerIcon },
   { href: "/connections", label: "Bağlantı Yöneticisi", icon: LinkIcon },
   { href: "/describe-columns", label: "Sütun Açıklama", icon: TableCellsIcon },
@@ -58,14 +59,14 @@ const Sidebar = () => {
       
       {/* Sidebar */}
       <aside className={`w-64 md:w-72 h-screen bg-white/90 backdrop-blur-xl border-r border-gray-200/50 flex flex-col p-4 md:p-6 shadow-2xl fixed md:static z-20 transition-all duration-500 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
-        <div className="flex items-center gap-2 md:gap-3 mb-8 md:mb-12">
-          <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg md:rounded-xl flex items-center justify-center">
+        <Link href="/" className="flex items-center gap-2 md:gap-3 mb-8 md:mb-12 group">
+          <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg md:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
             <HomeIcon className="w-5 h-5 md:w-6 md:h-6 text-white" />
           </div>
-          <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:from-purple-600 group-hover:to-blue-600 transition-all duration-300">
             HospiTech
           </h1>
-        </div>
+        </Link>
         
         <nav className="flex flex-col gap-2 md:gap-3 flex-1">
           {menu.map(({ href, label, icon: Icon }) => (

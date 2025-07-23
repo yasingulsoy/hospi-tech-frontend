@@ -17,7 +17,7 @@ import {
   TableCellsIcon
 } from "@heroicons/react/24/outline";
 import ConnectionStatus from "../components/ConnectionStatus";
-
+import DashboardWidget from "../components/DashboardWidget";
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState("");
@@ -67,6 +67,7 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           {/* Hoşgeldin Mesajı */}
           <div className="text-center mb-8 md:mb-12">
             <div className="inline-flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
@@ -86,24 +87,9 @@ export default function Home() {
               <ConnectionStatus />
             </div>
             
-            {/* Hızlı İstatistikler */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8 md:mb-12 px-4">
-              {stats.map((stat, index) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={index} className="bg-white/80 backdrop-blur-xl rounded-xl md:rounded-2xl p-4 md:p-6 border border-gray-200/50 shadow-lg">
-                    <div className="flex items-center gap-2 md:gap-3">
-                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg md:rounded-xl flex items-center justify-center">
-                        <Icon className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <div className="text-lg md:text-2xl font-bold text-gray-900">{stat.value}</div>
-                        <div className="text-xs md:text-sm text-gray-600">{stat.label}</div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            {/* Dashboard Widget */}
+            <div className="mb-8 md:mb-12 px-4">
+              <DashboardWidget />
             </div>
           </div>
 
@@ -202,32 +188,44 @@ export default function Home() {
           </div>
 
           {/* Son Aktiviteler */}
-          <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/50 shadow-xl">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Son Aktiviteler</h3>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl">
-                <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
-                  <ServerIcon className="w-5 h-5 text-white" />
+          <div className="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-6 md:p-8 border border-gray-200/50 shadow-xl">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">Son Aktiviteler</h3>
+            <div className="space-y-3 md:space-y-4">
+              <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl md:rounded-2xl">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-500 rounded-lg md:rounded-xl flex items-center justify-center">
+                  <ServerIcon className="w-4 h-4 md:w-5 md:h-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-gray-900">Veritabanı bağlantısı kuruldu</p>
-                  <p className="text-sm text-gray-600">3 tablo yüklendi</p>
+                  <p className="font-semibold text-gray-900 text-sm md:text-base">Veritabanı bağlantısı kuruldu</p>
+                  <p className="text-xs md:text-sm text-gray-600">3 tablo yüklendi</p>
                 </div>
                 <span className="text-xs text-gray-500">2 dk önce</span>
               </div>
               
-              <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl">
-                <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
-                  <ChartBarIcon className="w-5 h-5 text-white" />
+              <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl md:rounded-2xl">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-green-500 rounded-lg md:rounded-xl flex items-center justify-center">
+                  <ChartBarIcon className="w-4 h-4 md:w-5 md:h-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-gray-900">Aylık gelir raporu oluşturuldu</p>
-                  <p className="text-sm text-gray-600">Çizgi grafik formatında</p>
+                  <p className="font-semibold text-gray-900 text-sm md:text-base">Aylık gelir raporu oluşturuldu</p>
+                  <p className="text-xs md:text-sm text-gray-600">Çizgi grafik formatında</p>
                 </div>
                 <span className="text-xs text-gray-500">15 dk önce</span>
               </div>
+
+              <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl md:rounded-2xl">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-purple-500 rounded-lg md:rounded-xl flex items-center justify-center">
+                  <ChatBubbleLeftRightIcon className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900 text-sm md:text-base">AI sorgusu çalıştırıldı</p>
+                  <p className="text-xs md:text-sm text-gray-600">"En çok satan ürünler" sorgusu</p>
+                </div>
+                <span className="text-xs text-gray-500">1 saat önce</span>
+              </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     );

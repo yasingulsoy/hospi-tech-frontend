@@ -77,9 +77,11 @@ export default function QueryPage() {
   };
 
   return (
-    <div>
-      <QueryInput onSubmit={handleQuery} />
-      <QueryResult loading={loading} error={error} data={data} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <QueryInput onSubmit={handleQuery} />
+        <QueryResult loading={loading} error={error} data={data} />
+      </div>
     </div>
   );
 } 

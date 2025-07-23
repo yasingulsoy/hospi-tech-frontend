@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import AuthProvider from '../components/AuthProvider';
+import NotificationSystem from '../components/NotificationSystem';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.variable} font-sans bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen text-gray-900`}>
         <AuthProvider>
           {children}
+          <NotificationSystem />
         </AuthProvider>
       </body>
     </html>
