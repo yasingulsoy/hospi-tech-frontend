@@ -1,19 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
-// Örnek/mock tablo ve sütun verisi
-const mockColumns = [
-  { table: "patients", column: "id", type: "integer", description: "" },
-  { table: "patients", column: "name", type: "text", description: "" },
-  { table: "patients", column: "birth_date", type: "date", description: "" },
-  { table: "treatments", column: "treatment_date", type: "date", description: "" },
-  { table: "treatments", column: "total_fee", type: "decimal", description: "" },
-];
-
 export default function DescribeColumnsTable() {
-  const [columns, setColumns] = useState(mockColumns);
-  const [saving, setSaving] = useState(false);
+  const [columns, setColumns] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  // Veritabanı bilgilerini localStorage'dan al
+  useEffect(() => {
+    const dbInfo = localStorage.getItem('databaseInfo');
+    if (dbInfo) {
+      try {
+        const { tables } = JSON.parse(dbInfo);
+        const allColumns = tables.flatMap((table: any) =>
+          table.columns.map((col: any) => ({
+            table: table.table,
+            column: col.column_name,
+            type: col.data_type,
+            description: col.column_comment || ""
+          }))
+        );
+        setColumns(allColumns);
+        setError("");
+      } catch (err) {
+        setError("Veritabanı bilgileri yüklenemedi");
+      }
+    } else {
+      setError("Henüz veritabanı bağlantısı yapılmamış. Lütfen önce veritabanınızı bağlayın.");
+    }
+    setLoading(false);
+  }, []);
 
   // Açıklama güncelleme
   const handleDescChange = (idx: number, value: string) => {
@@ -34,11 +51,48 @@ export default function DescribeColumnsTable() {
     alert("Açıklamalar kaydedildi!");
   };
 
+  if (loading) {
+    return (
+      <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/50 shadow-xl animate-fade-in">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Veritabanı bilgileri yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/50 shadow-xl animate-fade-in">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <InformationCircleIcon className="w-8 h-8 text-red-500" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Veritabanı Bağlantısı Gerekli</h3>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <a 
+            href="/db-upload" 
+            className="btn-gradient inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-white font-semibold"
+          >
+            Veritabanı Bağla
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-10 border border-blue-100 animate-fade-in">
-      <h3 className="text-lg font-bold mb-6 text-blue-700 flex items-center gap-2">
-        <InformationCircleIcon className="w-6 h-6 text-blue-400" /> Sütun Açıklamaları
-      </h3>
+    <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur-xl rounded-3xl p-6 md:p-10 border border-gray-200/50 shadow-xl animate-fade-in">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+          <InformationCircleIcon className="w-7 h-7 text-white" />
+        </div>
+        <div>
+          <h3 className="text-2xl font-bold text-gray-900">Sütun Açıklamaları</h3>
+          <p className="text-gray-600">{columns.length} sütun bulundu</p>
+        </div>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full border-separate border-spacing-y-2">
           <thead>
