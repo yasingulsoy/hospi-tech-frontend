@@ -21,10 +21,18 @@ const Sidebar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+  const [excelFiles, setExcelFiles] = useState<any[]>([]);
 
   useEffect(() => {
     const loginStatus = localStorage.getItem("isLoggedIn");
     setIsLoggedIn(loginStatus === "true");
+  }, []);
+
+  useEffect(() => {
+    const files = localStorage.getItem('excelFiles');
+    if (files) {
+      setExcelFiles(JSON.parse(files));
+    }
   }, []);
 
   const handleLogout = () => {
@@ -68,6 +76,32 @@ const Sidebar = () => {
           </h1>
         </Link>
         
+        {/* Geçmiş Excel dosyaları bölümü */}
+        {excelFiles.length > 0 && (
+          <div className="mb-6">
+            <div className="font-semibold mb-2 text-gray-700">Geçmiş Excel Dosyaları:</div>
+            <div className="flex flex-wrap gap-2">
+              {excelFiles.map((file: any) => (
+                <button
+                  key={file.fileName}
+                  className="px-3 py-1 rounded-lg border border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs"
+                  onClick={() => {
+                    localStorage.setItem('databaseInfo', JSON.stringify({
+                      type: 'excel',
+                      tables: file.tables,
+                      connectedAt: file.uploadedAt,
+                      fileName: file.fileName
+                    }));
+                    alert(`${file.fileName} dosyasının açıklamaları ve tablo yapısı yüklendi! Artık sorgu ekranında bu dosyayı kullanabilirsin.`);
+                  }}
+                >
+                  {file.fileName}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <nav className="flex flex-col gap-2 md:gap-3 flex-1">
           {menu.map(({ href, label, icon: Icon }) => (
             <Link

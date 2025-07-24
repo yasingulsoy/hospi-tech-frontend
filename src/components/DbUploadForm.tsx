@@ -16,6 +16,7 @@ export default function DbUploadForm() {
   const [tables, setTables] = useState<any[]>([]);
   const [showDescribe, setShowDescribe] = useState(false);
   const [excelFiles, setExcelFiles] = useState<any[]>([]);
+  const [missingFile, setMissingFile] = useState<string | null>(null);
 
   // Yüklenen dosyaları localStorage'dan yükle
   useEffect(() => {
@@ -259,7 +260,23 @@ export default function DbUploadForm() {
               <button
                 key={file.fileName}
                 className="px-3 py-1 rounded-lg border border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm"
-                onClick={() => {
+                onClick={async () => {
+                  // Backend'de dosya var mı kontrol et
+                  const res = await fetch(`/uploads/${file.fileName}`, { method: 'HEAD' });
+                  if (!res.ok) {
+                    setMissingFile(file.fileName);
+                    setTables(file.tables);
+                    setSuccess(false);
+                    setShowDescribe(true);
+                    localStorage.setItem('databaseInfo', JSON.stringify({
+                      type: 'excel',
+                      tables: file.tables,
+                      connectedAt: file.uploadedAt,
+                      fileName: file.fileName
+                    }));
+                    return;
+                  }
+                  setMissingFile(null);
                   setTables(file.tables);
                   setSuccess(true);
                   setShowDescribe(true);
@@ -275,6 +292,12 @@ export default function DbUploadForm() {
               </button>
             ))}
           </div>
+        </div>
+      )}
+      {/* Dosya eksikse uyarı göster */}
+      {missingFile && (
+        <div className="bg-red-100 border border-red-300 text-red-700 rounded-lg p-4 mb-4">
+          <b>{missingFile}</b> dosyasının fiziksel kopyası sunucuda bulunamadı. Lütfen dosyayı tekrar yükleyin. Açıklamalarınız ve tablo yapınız otomatik olarak yüklenecek.
         </div>
       )}
     </div>
