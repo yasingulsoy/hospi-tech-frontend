@@ -12,7 +12,18 @@ export async function POST(req: NextRequest) {
     if (!aciklama || !tabloYapisi) {
       return NextResponse.json({ error: "Açıklama ve tablo yapısı zorunludur." }, { status: 400 });
     }
-    const systemPrompt = `Sen bir SQL uzmanısın. Kullanıcıdan gelen açıklama ve aşağıdaki tablo/sütun açıklamalarına göre SADECE SELECT sorgusu üret. DELETE, UPDATE, INSERT, DROP, ALTER gibi sorgular kesinlikle üretme. Sorgu çıktısı sadece SQL kodu olsun, açıklama veya başka bir şey ekleme.\n\nTablo ve sütun açıklamaları:\n${tabloYapisi}\n\nKullanıcı açıklaması:\n${aciklama}`;
+    const systemPrompt = `
+Sen bir SQL uzmanısın.
+Kullanıcıdan gelen açıklama ve aşağıdaki tablo/sütun açıklamalarına göre SADECE ve SADECE SELECT ile başlayan bir SQL sorgusu üret.
+DELETE, UPDATE, INSERT, DROP, ALTER gibi sorgular kesinlikle üretme.
+Çıktı SADECE SQL kodu olsun, açıklama veya başka bir şey ekleme.
+Yanıtın sadece tek satırda ve SELECT ile başlasın.
+Tablo ve sütun açıklamaları:
+${tabloYapisi}
+
+Kullanıcı açıklaması:
+${aciklama}
+`;
     const openai = new OpenAI({ apiKey });
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -24,6 +35,7 @@ export async function POST(req: NextRequest) {
       temperature: 0.1,
     });
     const sql = completion.choices[0].message?.content?.trim() || "";
+    console.log("OpenAI yanıtı:", sql);
     if (!sql.toLowerCase().startsWith("select")) {
       return NextResponse.json({ error: "Sadece SELECT sorgusu üretildiğinden emin olunamadı. Lütfen tekrar deneyin." }, { status: 400 });
     }

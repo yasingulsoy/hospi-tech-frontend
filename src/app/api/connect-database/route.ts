@@ -5,7 +5,7 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import mysql from 'mysql2/promise';
 import { Client } from 'pg';
-import xlsx from 'xlsx';
+import * as xlsx from 'xlsx';
 
 // Veritabanı bağlantıları için gerçek implementasyon
 export async function POST(request: NextRequest) {

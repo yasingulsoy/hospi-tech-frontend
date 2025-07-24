@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CloudArrowUpIcon, LinkIcon, GlobeAltIcon, CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import DescribeColumnsTable from "./DescribeColumnsTable";
 
 export default function DbUploadForm() {
   const [dbType, setDbType] = useState("sqlite");
@@ -13,6 +14,7 @@ export default function DbUploadForm() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [tables, setTables] = useState<any[]>([]);
+  const [showDescribe, setShowDescribe] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,8 +61,11 @@ export default function DbUploadForm() {
       localStorage.setItem('databaseInfo', JSON.stringify({
         type: dbType,
         tables: data.tables,
-        connectedAt: new Date().toISOString()
+        connectedAt: new Date().toISOString(),
+        fileName: dbType === 'excel' && sqliteFile ? sqliteFile.name : undefined
       }));
+      // Eğer excel ise açıklama ekranını aç
+      if (dbType === 'excel') setShowDescribe(true);
 
     } catch (err: any) {
       setError(err.message);
@@ -184,35 +189,38 @@ export default function DbUploadForm() {
 
       {/* Başarı Mesajı */}
       {success && (
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl md:rounded-3xl p-6 md:p-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 mb-4 md:mb-6">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl md:rounded-2xl flex items-center justify-center">
-              <CheckCircleIcon className="w-6 h-6 md:w-7 md:h-7 text-white" />
-            </div>
-            <div>
-              <h3 className="text-xl md:text-2xl font-bold text-gray-900">Bağlantı Başarılı!</h3>
-              <p className="text-sm md:text-base text-gray-600">{tables.length} tablo başarıyla yüklendi</p>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-            {tables.map((table, index) => (
-              <div key={index} className="bg-white rounded-xl md:rounded-2xl p-3 md:p-4 border border-gray-200 shadow-sm">
-                <h4 className="font-bold text-gray-900 mb-1 md:mb-2 text-sm md:text-base">📋 {table.table}</h4>
-                <p className="text-xs md:text-sm text-gray-600">{table.columns.length} sütun</p>
-                <div className="mt-2 space-y-1">
-                  {table.columns.slice(0, 3).map((col: any, colIndex: number) => (
-                    <div key={colIndex} className="text-xs text-gray-500">
-                      • {col.column_name} ({col.data_type})
-                    </div>
-                  ))}
-                  {table.columns.length > 3 && (
-                    <div className="text-xs text-blue-600">+{table.columns.length - 3} daha...</div>
-                  )}
-                </div>
+        <div>
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl md:rounded-3xl p-6 md:p-8 mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 mb-4 md:mb-6">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl md:rounded-2xl flex items-center justify-center">
+                <CheckCircleIcon className="w-6 h-6 md:w-7 md:h-7 text-white" />
               </div>
-            ))}
+              <div>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900">Bağlantı Başarılı!</h3>
+                <p className="text-sm md:text-base text-gray-600">{tables.length} tablo başarıyla yüklendi</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+              {tables.map((table, index) => (
+                <div key={index} className="bg-white rounded-xl md:rounded-2xl p-3 md:p-4 border border-gray-200 shadow-sm">
+                  <h4 className="font-bold text-gray-900 mb-1 md:mb-2 text-sm md:text-base">📋 {table.table}</h4>
+                  <p className="text-xs md:text-sm text-gray-600">{table.columns.length} sütun</p>
+                  <div className="mt-2 space-y-1">
+                    {table.columns.slice(0, 3).map((col: any, colIndex: number) => (
+                      <div key={colIndex} className="text-xs text-gray-500">
+                        • {col.column_name} ({col.data_type})
+                      </div>
+                    ))}
+                    {table.columns.length > 3 && (
+                      <div className="text-xs text-blue-600">+{table.columns.length - 3} daha...</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
+          {/* Excel ise açıklama ekranını göster */}
+          {showDescribe && <DescribeColumnsTable />}
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import * as xlsx from "xlsx";
 
 const dbType = process.env.DB_TYPE || "sqlite";
 const sqlitePath = process.env.SQLITE_PATH || "./veritabani.sqlite";
@@ -63,6 +64,42 @@ export async function POST(req: NextRequest) {
         rows = mssqlResult.recordset;
         await pool.close();
         break;
+
+      case "excel": {
+        // Excel dosyasını uploads klasöründen oku
+        const uploadsDir = process.cwd() + "/uploads/";
+        const fileName = dbInfo.fileName || dbInfo.filePath || dbInfo.file || dbInfo.name;
+        if (!fileName) {
+          return NextResponse.json({ error: "Excel dosyası bulunamadı." }, { status: 400 });
+        }
+        const fs = require("fs");
+        const path = require("path");
+        const filePath = path.join(uploadsDir, fileName);
+        if (!fs.existsSync(filePath)) {
+          return NextResponse.json({ error: "Excel dosyası bulunamadı." }, { status: 400 });
+        }
+        const workbook = xlsx.readFile(filePath);
+        // Tüm sheet'leri alasql'e yükle
+        const sheets: Record<string, any[]> = {};
+        for (const sheetName of workbook.SheetNames) {
+          const json = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: null });
+          sheets[sheetName] = json;
+        }
+        // alasql ile sorguyu çalıştır
+        try {
+          // Dinamik import
+          const alasql = (await import("alasql")).default;
+          alasql("RESET DATABASE");
+          for (const [sheetName, data] of Object.entries(sheets)) {
+            alasql.tables[sheetName] = { data };
+          }
+          const result = alasql(sql);
+          rows = Array.isArray(result) ? result : [result];
+        } catch (err: any) {
+          return NextResponse.json({ error: "Excel üzerinde sorgu çalıştırılırken hata: " + err.message }, { status: 400 });
+        }
+        break;
+      }
 
       default:
         return NextResponse.json({ error: "Desteklenmeyen veritabanı türü." }, { status: 400 });
