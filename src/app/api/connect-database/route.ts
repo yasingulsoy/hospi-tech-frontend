@@ -5,6 +5,7 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import mysql from 'mysql2/promise';
 import { Client } from 'pg';
+import xlsx from 'xlsx';
 
 // Veritabanı bağlantıları için gerçek implementasyon
 export async function POST(request: NextRequest) {
@@ -12,6 +13,7 @@ export async function POST(request: NextRequest) {
     let dbType: string;
     let connectionString: string | undefined;
     let sqliteFile: File | undefined;
+    let excelFile: File | undefined;
     
     // Content-Type'a göre request'i parse et
     const contentType = request.headers.get('content-type');
@@ -22,11 +24,12 @@ export async function POST(request: NextRequest) {
       dbType = body.dbType;
       connectionString = body.connectionString;
     } else {
-      // FormData request (SQLite için)
+      // FormData request (SQLite/Excel için)
       const formData = await request.formData();
       dbType = formData.get('dbType') as string;
       connectionString = formData.get('connectionString') as string;
       sqliteFile = formData.get('sqliteFile') as File;
+      excelFile = formData.get('excelFile') as File;
     }
     
     let tables: any[] = [];
@@ -37,6 +40,12 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: 'SQLite dosyası seçilmedi' }, { status: 400 });
         }
         tables = await connectSQLite(sqliteFile);
+        break;
+      case 'excel':
+        if (!excelFile) {
+          return NextResponse.json({ error: 'Excel dosyası seçilmedi' }, { status: 400 });
+        }
+        tables = await connectExcel(excelFile);
         break;
         
       case 'postgresql':
@@ -241,4 +250,41 @@ async function connectMSSQL(connectionString: string) {
       ]
     }
   ];
+} 
+
+async function connectExcel(file: File) {
+  try {
+    // Uploads klasörünü oluştur
+    const uploadsDir = join(process.cwd(), 'uploads');
+    await mkdir(uploadsDir, { recursive: true });
+
+    // Dosyayı kaydet
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const filePath = join(uploadsDir, file.name);
+    await writeFile(filePath, buffer);
+
+    // Excel dosyasını oku
+    const workbook = xlsx.read(buffer, { type: 'buffer' });
+    const tables = [];
+    for (const sheetName of workbook.SheetNames) {
+      const worksheet = workbook.Sheets[sheetName];
+      const json = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+      if (json.length === 0) continue;
+      const columns = (json[0] as string[]).map((colName) => ({
+        column_name: colName,
+        data_type: 'string',
+        is_nullable: 'YES',
+        column_default: null,
+        column_comment: ''
+      }));
+      tables.push({
+        table: sheetName,
+        columns
+      });
+    }
+    return tables;
+  } catch (error: any) {
+    throw new Error(`Excel dosyası okunamadı: ${error.message}`);
+  }
 } 

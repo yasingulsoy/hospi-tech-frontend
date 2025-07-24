@@ -8,6 +8,7 @@ export default function DbUploadForm() {
   const [connectionString, setConnectionString] = useState("");
   const [connectionUrl, setConnectionUrl] = useState("");
   const [sqliteFile, setSqliteFile] = useState<File | null>(null);
+  const [excelFile, setExcelFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -28,6 +29,11 @@ export default function DbUploadForm() {
           throw new Error("SQLite dosyası seçilmedi");
         }
         formData.append('sqliteFile', sqliteFile);
+      } else if (dbType === "excel") {
+        if (!excelFile) {
+          throw new Error("Excel dosyası seçilmedi");
+        }
+        formData.append('excelFile', excelFile);
       } else {
         if (!connectionString) {
           throw new Error("Bağlantı dizesi girilmedi");
@@ -66,7 +72,8 @@ export default function DbUploadForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSqliteFile(file);
+      if (dbType === "sqlite") setSqliteFile(file);
+      else if (dbType === "excel") setExcelFile(file);
     }
   };
 
@@ -93,12 +100,13 @@ export default function DbUploadForm() {
               <select
                 className="w-full rounded-xl md:rounded-2xl border-2 border-gray-200 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 p-3 md:p-4 text-base md:text-lg transition-all duration-300"
                 value={dbType}
-                onChange={e => setDbType(e.target.value)}
+                onChange={e => { setDbType(e.target.value); setSqliteFile(null); setExcelFile(null); }}
               >
                 <option value="sqlite">🗄️ SQLite</option>
                 <option value="postgresql">🐘 PostgreSQL</option>
                 <option value="mysql">🐬 MySQL</option>
                 <option value="mssql">💾 MSSQL</option>
+                <option value="excel">📊 Excel (.xlsx)</option>
               </select>
             </div>
 
@@ -113,6 +121,19 @@ export default function DbUploadForm() {
                   accept=".sqlite,.db"
                   onChange={handleFileChange}
                   className="w-full rounded-xl md:rounded-2xl border-2 border-gray-200 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 p-3 md:p-4 text-base md:text-lg transition-all duration-300 file:bg-gradient-to-r file:from-blue-500 file:to-purple-600 file:text-white file:rounded-lg md:file:rounded-xl file:border-0 file:mr-3 md:file:mr-4 file:px-3 md:file:px-4 file:py-2 file:font-semibold"
+                />
+              </div>
+            ) : dbType === "excel" ? (
+              <div>
+                <div className="text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3 flex items-center gap-2">
+                  <CloudArrowUpIcon className="w-4 h-4 md:w-5 md:h-5 text-green-500" /> 
+                  Excel Dosyası (.xlsx)
+                </div>
+                <input
+                  type="file"
+                  accept=".xlsx"
+                  onChange={handleFileChange}
+                  className="w-full rounded-xl md:rounded-2xl border-2 border-gray-200 focus:ring-4 focus:ring-green-500/20 focus:border-green-500 p-3 md:p-4 text-base md:text-lg transition-all duration-300 file:bg-gradient-to-r file:from-green-500 file:to-blue-600 file:text-white file:rounded-lg md:file:rounded-xl file:border-0 file:mr-3 md:file:mr-4 file:px-3 md:file:px-4 file:py-2 file:font-semibold"
                 />
               </div>
             ) : (
