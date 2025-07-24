@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const systemPrompt = `Sen bir SQL uzmanısın. Kullanıcıdan gelen açıklama ve aşağıdaki tablo/sütun açıklamalarına göre SADECE SELECT sorgusu üret. DELETE, UPDATE, INSERT, DROP, ALTER gibi sorgular kesinlikle üretme. Sorgu çıktısı sadece SQL kodu olsun, açıklama veya başka bir şey ekleme.\n\nTablo ve sütun açıklamaları:\n${tabloYapisi}\n\nKullanıcı açıklaması:\n${aciklama}`;
     const openai = new OpenAI({ apiKey });
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: aciklama }
