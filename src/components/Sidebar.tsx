@@ -29,10 +29,17 @@ const Sidebar = () => {
   }, []);
 
   useEffect(() => {
-    const files = localStorage.getItem('excelFiles');
-    if (files) {
-      setExcelFiles(JSON.parse(files));
-    }
+    const updateFiles = () => {
+      const files = localStorage.getItem('excelFiles');
+      if (files) {
+        setExcelFiles(JSON.parse(files));
+      } else {
+        setExcelFiles([]);
+      }
+    };
+    updateFiles();
+    window.addEventListener('storage', updateFiles);
+    return () => window.removeEventListener('storage', updateFiles);
   }, []);
 
   const handleLogout = () => {

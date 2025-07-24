@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { InformationCircleIcon, SparklesIcon } from "@heroicons/react/24/outline";
 
 export default function DescribeColumnsTable() {
   const [columns, setColumns] = useState<any[]>([]);
@@ -35,6 +35,23 @@ export default function DescribeColumnsTable() {
   // Açıklama güncelleme
   const handleDescChange = (idx: number, value: string) => {
     setColumns(cols => cols.map((col, i) => i === idx ? { ...col, description: value } : col));
+  };
+
+  // Açıklamayı yapay zekadan al
+  const handleAIDesc = async (col: any, idx: number) => {
+    try {
+      const response = await fetch("/api/ai-column-desc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table: col.table, column: col.column, type: col.type })
+      });
+      const data = await response.json();
+      if (data.desc) {
+        handleDescChange(idx, data.desc);
+      }
+    } catch (e) {
+      alert("Açıklama üretilemedi. Lütfen tekrar deneyin.");
+    }
   };
 
   // Kaydetme simülasyonu
@@ -110,13 +127,23 @@ export default function DescribeColumnsTable() {
                 <td className="px-4 py-2 font-mono text-sm text-gray-700">{col.column}</td>
                 <td className="px-4 py-2 text-gray-700">{col.type}</td>
                 <td className="px-4 py-2">
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 px-3 py-1 text-sm text-gray-900 placeholder-gray-500"
-                    placeholder="Örn: Tedavi tarihi, Toplam ücret..."
-                    value={col.description}
-                    onChange={e => handleDescChange(idx, e.target.value)}
-                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      className="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 px-3 py-1 text-sm text-gray-900 placeholder-gray-500"
+                      placeholder="Örn: Tedavi tarihi, Toplam ücret..."
+                      value={col.description}
+                      onChange={e => handleDescChange(idx, e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      title="Yapay zekâ ile doldur"
+                      className="p-1 rounded bg-blue-50 hover:bg-blue-100 border border-blue-200"
+                      onClick={() => handleAIDesc(col, idx)}
+                    >
+                      <SparklesIcon className="w-5 h-5 text-blue-500" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
