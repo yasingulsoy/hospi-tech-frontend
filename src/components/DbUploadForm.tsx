@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CloudArrowUpIcon, LinkIcon, GlobeAltIcon, CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import DescribeColumnsTable from "./DescribeColumnsTable";
 
@@ -15,6 +15,30 @@ export default function DbUploadForm() {
   const [error, setError] = useState("");
   const [tables, setTables] = useState<any[]>([]);
   const [showDescribe, setShowDescribe] = useState(false);
+  const [excelFiles, setExcelFiles] = useState<any[]>([]);
+
+  // Yüklenen dosyaları localStorage'dan yükle
+  useEffect(() => {
+    const files = localStorage.getItem('excelFiles');
+    if (files) {
+      setExcelFiles(JSON.parse(files));
+    }
+  }, []);
+
+  // Excel dosyası ve açıklamalarını kaydet
+  const saveExcelFile = (fileName: string, tables: any[]) => {
+    let files = localStorage.getItem('excelFiles');
+    let arr = files ? JSON.parse(files) : [];
+    // Aynı isimde dosya varsa güncelle
+    const idx = arr.findIndex((f: any) => f.fileName === fileName);
+    if (idx !== -1) {
+      arr[idx] = { fileName, tables, uploadedAt: new Date().toISOString() };
+    } else {
+      arr.push({ fileName, tables, uploadedAt: new Date().toISOString() });
+    }
+    localStorage.setItem('excelFiles', JSON.stringify(arr));
+    setExcelFiles(arr);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,8 +88,11 @@ export default function DbUploadForm() {
         connectedAt: new Date().toISOString(),
         fileName: dbType === 'excel' && sqliteFile ? sqliteFile.name : undefined
       }));
-      // Eğer excel ise açıklama ekranını aç
-      if (dbType === 'excel') setShowDescribe(true);
+      // Excel dosyasını ve açıklamalarını kaydet
+      if (dbType === 'excel' && sqliteFile) {
+        saveExcelFile(sqliteFile.name, data.tables);
+        setShowDescribe(true);
+      }
 
     } catch (err: any) {
       setError(err.message);
@@ -221,6 +248,33 @@ export default function DbUploadForm() {
           </div>
           {/* Excel ise açıklama ekranını göster */}
           {showDescribe && <DescribeColumnsTable />}
+        </div>
+      )}
+      {/* Daha önce yüklenen Excel dosyaları listesi */}
+      {excelFiles.length > 0 && (
+        <div className="mb-6">
+          <div className="font-semibold mb-2 text-gray-700">Yüklenen Excel Dosyaları:</div>
+          <div className="flex flex-wrap gap-2">
+            {excelFiles.map((file, idx) => (
+              <button
+                key={file.fileName}
+                className="px-3 py-1 rounded-lg border border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm"
+                onClick={() => {
+                  setTables(file.tables);
+                  setSuccess(true);
+                  setShowDescribe(true);
+                  localStorage.setItem('databaseInfo', JSON.stringify({
+                    type: 'excel',
+                    tables: file.tables,
+                    connectedAt: file.uploadedAt,
+                    fileName: file.fileName
+                  }));
+                }}
+              >
+                {file.fileName}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
